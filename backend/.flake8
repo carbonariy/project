@@ -1,0 +1,15 @@
+[flake8]
+max-line-length = 100
+ignore =
+  W605,
+  W504
+exclude =
+  # no need to check third party libraries
+  util,
+  logs,
+  media,
+  # no need to check settings
+  backend/settings.py,
+  # no need to check generated code
+  migrations,
+  tests,
