@@ -1,0 +1,31 @@
+version: '2.2'
+
+services:
+
+  redis:
+    command: redis-server --appendonly yes
+    image: redis:6.2
+    volumes:
+      - ${REDIS_ROOT:-/opt/redis/}:/data
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    volumes:
+      - ${LOGS_ROOT:-/opt/app/logs}:/code/logs
+      - ${STATIC_ROOT:-/opt/app/static}:/code/static
+      - ${MEDIA_ROOT:-/opt/app/media}:/code/media
+    command: supervisord -n
+    depends_on:
+      - redis
+    restart: always
+    logging:
+      options:
+        max-size: "3m"
+        max-file: "10"
+    mem_limit: 15000000000
+
