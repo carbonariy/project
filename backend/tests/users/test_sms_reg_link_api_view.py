@@ -1,17 +1,15 @@
+import pytest
+
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework import status
 
 
-class SMSRegistrationLinkApiViewTests(APITestCase):
-    def execute(self, should_code=200, phone='+79999999999'):
-        url = reverse('v1:sms_reg_link-list')
-        client = self.client_class()
+@pytest.mark.parametrize('phone,status_expected', [
+    ('+79999999999', status.HTTP_200_OK),
+    ('THISISNOTANUMBER!', status.HTTP_400_BAD_REQUEST),
+])
+def test_sms_registration_api_view(api_client, phone, status_expected):
+    url = reverse('v1:sms_reg_link-list')
 
-        response = client.post(url, data={'phone': phone}, format='json')
-        self.assertEqual(response.status_code, should_code)
-
-    def test_post(self):
-        self.execute()
-
-    def test_post_wrong_phone(self):
-        self.execute(should_code=400, phone='THISISNOTANUMBER!')
+    response = api_client.post(url, data={'phone': phone}, format='json')
+    assert response.status_code == status_expected
