@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 # SMSC.RU API (smsc.ru) версия 2.0 (03.07.2019)
 # origin https://smsc.ru/doc/api/smsc_api.py
+# type: ignore
 
-from datetime import datetime
 import logging
 import smtplib
+from datetime import datetime
 
 from django.conf import settings
 
 try:
-    from urllib import urlopen, quote
+    from urllib import quote, urlopen
 except ImportError:
-    from urllib.request import urlopen
     from urllib.parse import quote
+    from urllib.request import urlopen
 
 LOGGER = logging.getLogger('sms')
 

@@ -1,8 +1,7 @@
 import logging
 
-from backend.celery import app as celery_app
+from app.celery import app as celery_app
 from users.services import sms
-
 
 logger = logging.getLogger(__name__)
 

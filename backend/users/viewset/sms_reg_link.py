@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.utils.translation import gettext as _
-from rest_framework import mixins
-from rest_framework import status
-from rest_framework import viewsets
+
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
 from users.serializers.sms_reg_link import RequestLinkSerializer

@@ -2,10 +2,8 @@ import logging
 import re
 
 from django.conf import settings
-from rest_framework.exceptions import APIException
 
-from util.smsc import SMSC
-
+from util.smsc import SMSC  # type: ignore[attr-defined]
 
 logger = logging.getLogger('sms')
 
@@ -26,11 +24,11 @@ ERROR_CODES = {
 REGEX_PHONE_DEV = re.compile(r'\+?7777\d{7}')
 
 
-class SMSException(APIException):
+class SMSException(Exception):
     pass
 
 
-def send(to_phones, message):
+def send(to_phones: list[str], message: str) -> None:
     concatenated_phones = ','.join(to_phones)
     if settings.SMS_SENDING_ENABLE:
         if settings.DEBUG and REGEX_PHONE_DEV.fullmatch(to_phones[0]):

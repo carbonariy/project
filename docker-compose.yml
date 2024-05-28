@@ -1,31 +1,29 @@
-version: '2.2'
-
 services:
-
   redis:
-    command: redis-server --appendonly yes
     image: redis:6.2
+
+  worker:
+    image: app-image
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    command: celery -A app --workdir /code/backend worker -E -l INFO -Q app_queue -P gevent -c 10
+    depends_on:
+      - redis
     volumes:
-      - ${REDIS_ROOT:-/opt/redis/}:/data
-    ports:
-      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+      - .:/code
     restart: always
 
   app:
+    image: app-image
+    pull_policy: never
     build:
       context: .
       dockerfile: docker/app/Dockerfile
     volumes:
-      - ${LOGS_ROOT:-/opt/app/logs}:/code/logs
-      - ${STATIC_ROOT:-/opt/app/static}:/code/static
-      - ${MEDIA_ROOT:-/opt/app/media}:/code/media
+      - .:/code
+    ports:
+      - "${APP_PORT:-8080}:8080"
     command: supervisord -n
-    depends_on:
-      - redis
     restart: always
-    logging:
-      options:
-        max-size: "3m"
-        max-file: "10"
-    mem_limit: 15000000000
-
